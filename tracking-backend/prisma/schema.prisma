@@ -6,3 +6,14 @@ datasource db {
   provider = "postgresql"
   url = env("DATABASE_URL")
 }
+
+model Mechanic {
+  id        String   @id @default(cuid())  // unique ID
+  name      String                         // required
+  phone     String   @unique               // unique phone number
+  latitude  Float                          // decimal number
+  longitude Float
+  isActive  Boolean  @default(true)        // defaults to true
+  createdAt DateTime @default(now())       // timestamp, auto-set
+  jobs      Job[]                          // relationship: one mechanic has many jobs
+}
