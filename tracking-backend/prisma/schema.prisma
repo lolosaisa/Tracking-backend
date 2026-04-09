@@ -23,9 +23,11 @@ model Driver {
     name String
     email String @unique
     phone String @unique
-    password String @unique
-    latitude Float
-    longitude Float
+    password String @unique //hashed
+
+    latitude Float? //optional because the driver maybe offline
+    longitude Float?
+
     createdAt DateTime @default(now())
     jobs Job[]
 }
@@ -33,12 +35,18 @@ model Driver {
 model Job {
   id          String   @id @default(cuid())
   driverId    String                        // foreign key
-  mechanicId  String                        // foreign key
+  mechanicId  String?                      // foreign key
+
   driver      Driver   @relation(fields: [driverId], references: [id])
-  mechanic    Mechanic @relation(fields: [mechanicId], references: [id])
+  mechanic   Mechanic? @relation(fields: [mechanicId], references: [id])
+
   status      JobStatus @default(PENDING)
   description String?                      // optional field (the ?)
   createdAt   DateTime @default(now())
+}
+
+model Garage {
+
 }
 
 enum JobStatus {
@@ -47,4 +55,10 @@ enum JobStatus {
     IN-PROGRESS
     COMPLETED
     CANCELLED
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
 }
