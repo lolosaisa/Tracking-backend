@@ -4,57 +4,80 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
+
+// ─────────────────────────────────────────
+// MODELS
+// ─────────────────────────────────────────
 
 model Mechanic {
-  id        String   @id @default(cuid())  // unique ID
-  name      String                         // required
-  phone     String   @unique               // unique phone number
-  latitude  Float                          // decimal number
-  longitude Float
-  isActive  Boolean  @default(true)        // defaults to true
-  createdAt DateTime @default(now())       // timestamp, auto-set
-  jobs      Job[]                          // relationship: one mechanic has many jobs
-}
-
-model Driver {
-    id String @id @default((cuid))
-    name String
-    email String @unique
-    phone String @unique
-    password String @unique //hashed
-
-    latitude Float? //optional because the driver maybe offline
-    longitude Float?
-
-    createdAt DateTime @default(now())
-    jobs Job[]
-}
-
-model Job {
-  id          String   @id @default(cuid())
-  driverId    String                        // foreign key
-  mechanicId  String?                      // foreign key
-
-  driver      Driver   @relation(fields: [driverId], references: [id])
-  mechanic   Mechanic? @relation(fields: [mechanicId], references: [id])
-
-  status      JobStatus @default(PENDING)
-  description String?                      // optional field (the ?)
-  createdAt   DateTime @default(now())
+  id                 String             @id @default(cuid())
+  name               String
+  phone              String             @unique
+  latitude           Float
+  longitude          Float
+  specialization     String? // e.g. "Electricals", "Tyres", "General"
+  profilePhoto       String? // URL to photo
+  verificationStatus VerificationStatus @default(PENDING)
+  isActive           Boolean            @default(true)
+  garageId           String? // optional — mechanic can be independent
+  garage             Garage?            @relation(fields: [garageId], references: [id])
+  createdAt          DateTime           @default(now())
+  jobs               Job[]
 }
 
 model Garage {
-
+  id                 String             @id @default(cuid())
+  name               String
+  phone              String             @unique
+  latitude           Float
+  longitude          Float
+  address            String?
+  verificationStatus VerificationStatus @default(PENDING)
+  isActive           Boolean            @default(true)
+  mechanics          Mechanic[] // a garage has many mechanics
+  job                Job[]
+  createdAt          DateTime           @default(now())
 }
 
+model Driver {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  phone    String @unique
+  password String
+
+  latitude  Float? //optional because the driver maybe offline
+  longitude Float?
+
+  createdAt DateTime @default(now())
+  jobs      Job[]
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  driverId    String
+  mechanicId  String? // optional until mechanic accepts
+  garageId    String? // driver can request a garage too
+  driver      Driver    @relation(fields: [driverId], references: [id])
+  mechanic    Mechanic? @relation(fields: [mechanicId], references: [id])
+  garage      Garage?   @relation(fields: [garageId], references: [id])
+  status      JobStatus @default(PENDING)
+  description String?
+  createdAt   DateTime  @default(now())
+}
+
+// ─────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────
+
 enum JobStatus {
-    PENDING
-    ACCEPTED
-    IN-PROGRESS
-    COMPLETED
-    CANCELLED
+  PENDING
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
 
 enum VerificationStatus {
