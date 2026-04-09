@@ -17,3 +17,34 @@ model Mechanic {
   createdAt DateTime @default(now())       // timestamp, auto-set
   jobs      Job[]                          // relationship: one mechanic has many jobs
 }
+
+model Driver {
+    id String @id @default((cuid))
+    name String
+    email String @unique
+    phone String @unique
+    password String @unique
+    latitude Float
+    longitude Float
+    createdAt DateTime @default(now())
+    jobs Job[]
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  driverId    String                        // foreign key
+  mechanicId  String                        // foreign key
+  driver      Driver   @relation(fields: [driverId], references: [id])
+  mechanic    Mechanic @relation(fields: [mechanicId], references: [id])
+  status      JobStatus @default(PENDING)
+  description String?                      // optional field (the ?)
+  createdAt   DateTime @default(now())
+}
+
+enum JobStatus {
+    PENDING
+    ACCEPTED
+    IN-PROGRESS
+    COMPLETED
+    CANCELLED
+}
