@@ -1,8 +1,5 @@
-export const prisma =
-  globalForPrisma.prisma ?? new PrismaClient({
-    log: ['query', 'error', 'warn'], // logs every SQL query in dev — very useful
-  });
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
-}
+// src/routes/mechanics.ts
+import { Router } from 'express';
+const router = Router();
+router.get('/', (req, res) => res.json({ message: 'mechanics route works' }));
+export default router;
