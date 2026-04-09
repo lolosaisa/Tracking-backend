@@ -10,6 +10,7 @@ import mechanicRoutes  from './routes/mechanics';
 import driverRoutes    from './routes/drivers';
 import garageRoutes    from './routes/garages';
 import jobRoutes       from './routes/jobs';
+import locationRoutes  from './routes/location';
 
 dotenv.config(); //this has to run before anything else
 
@@ -28,5 +29,17 @@ app.use((req, _res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
 });
+// Health check — always useful, no auth needed
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date() });
+});
+
+// Mount all route groups
+app.use('/api/auth',      authRoutes);
+app.use('/api/mechanics', mechanicRoutes);
+app.use('/api/drivers',   driverRoutes);
+app.use('/api/garages',   garageRoutes);
+app.use('/api/jobs',      jobRoutes);
+app.use('/api/location',  locationRoutes);
 
 
