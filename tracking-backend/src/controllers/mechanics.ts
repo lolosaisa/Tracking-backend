@@ -1,3 +1,4 @@
+// ── controllers/mechanics.ts ─────────────────────────
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 
@@ -21,11 +22,12 @@ export const getAllMechanics = async (req: Request, res: Response) => {
   }
 };
 
-export const getMechanicById = async (req: Request, res: Response) => {
+export const getMechanicById = async (
+    req: Request<{ id:string}>,
+     res: Response) => {
   try {
-    const mechanicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const mechanic = await prisma.mechanic.findUnique({
-      where: { id: mechanicId },
+      where: {id: req.params.id },
       include: { garage: true },   // joins garage data automatically
     });
     if (!mechanic) return res.status(404).json({ error: 'Mechanic not found' });
