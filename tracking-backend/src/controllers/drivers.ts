@@ -79,8 +79,9 @@ export const deleteDriverAccount = async (
   try {
     // Soft delete — set isActive: false, keep data for job history
     // Note: add isActive field to Driver model if not already there
-    await prisma.driver.delete({
+    await prisma.driver.update({
       where: { id: req.driverId },
+      data: { isActive: false },
     });
 
     return res.json({ message: 'Account deleted successfully' });
