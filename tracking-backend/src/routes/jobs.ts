@@ -1,4 +1,10 @@
 import { Router } from 'express';
+import { authMiddleware } from '../middlewares/auth';
+import { createJob, getMyJobs, updateJobStatus, getJobById } from '../controllers/jobs';
 const router = Router();
 router.get('/', (req, res) => res.json({ message: 'job route works' }));
+router.post('/',              authMiddleware, createJob);
+router.get('/my',             authMiddleware, getMyJobs);
+router.patch('/:id/status',   authMiddleware, updateJobStatus);
+router.get('/:id',            authMiddleware, getJobById);
 export default router;
