@@ -53,7 +53,7 @@ model Driver {
 
   createdAt DateTime @default(now())
   jobs      Job[]
-  isActive Boolean
+  isActive Boolean @default(true)
 }
 
 model Job {

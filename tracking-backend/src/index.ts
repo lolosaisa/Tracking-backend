@@ -10,7 +10,7 @@ import mechanicRoutes  from './routes/mechanics';
 import driverRoutes    from './routes/drivers';
 import garageRoutes    from './routes/garages';
 import jobRoutes       from './routes/jobs';
-import locationRoutes  from './routes/location';
+//import locationRoutes  from './routes/location';
 
 dotenv.config(); //this has to run before anything else
 
@@ -45,7 +45,7 @@ app.use('/api/mechanics', mechanicRoutes);
 app.use('/api/drivers',   driverRoutes);
 app.use('/api/garages',   garageRoutes);
 app.use('/api/jobs',      jobRoutes);
-app.use('/api/location',  locationRoutes);
+//app.use('/api/location',  locationRoutes);
 
 // 404 — no route matched
 app.use((_req, res) => {
