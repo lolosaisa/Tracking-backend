@@ -3,6 +3,8 @@ import { createServer } from 'http';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { prisma } from './lib/prisma';
+import { Server } from 'socket.io';
+import { registerSocketHandlers } from './sockets';
 
 // Route files
 import authRoutes      from './routes/auth';
@@ -16,6 +18,15 @@ dotenv.config(); //this has to run before anything else
 
 const app = express();
 const httpServer = createServer(app); //socket.io will attach here later for live tracking
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*', // allow all origins in dev
+    methods: ['GET', 'POST', ],
+  },
+  pingTimeout: 60000, // increase ping timeout for slow connections
+  pingInterval: 25000, // how often to check if client is alive
+});
 
 app.use(express.json());
 
@@ -46,6 +57,13 @@ app.use('/api/drivers',   driverRoutes);
 app.use('/api/garages',   garageRoutes);
 app.use('/api/jobs',      jobRoutes);
 //app.use('/api/location',  locationRoutes);
+// 
+
+// this Must come AFTER io is created, BEFORE httpServer.listen()(calling the socket handlers)
+registerSocketHandlers(io);
+
+
+
 
 // 404 — no route matched
 app.use((_req, res) => {
